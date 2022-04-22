@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "sass": "^1.50.1",
     "vue": "^3.2.25"
   },
   "devDependencies": {
@@ -20,7 +21,7 @@
   },
   "keywords": [
     "Web Technologien",
-    "wa",
+    "wt",
     "studium",
     "medieninformatik",
     "waeving the web",
