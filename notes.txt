@@ -1,0 +1,6 @@
+1. Low-Level API for neural network inference hardware acceleration
+2. Hardware agnostic abstraction Layer to use ML capabilities of underlying OS
+3. Not tied to platform specific capabilities
+4. Provides Browsers with abillity to run ML Networks through Browser implementation using the native ML APIs of the OS
+5. Does not provide model serialization and model delivery machanism
+6. Rely on supported browser Media Types
