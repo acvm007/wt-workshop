@@ -115,63 +115,6 @@
         ]
       }
     },
-    "objectDetection": {
-      "title": "Handschrift Erkennung",
-      "image": "paragliding.jpg",
-      "labelsUrl": "https://raw.githubusercontent.com/webmachinelearning/webnn-samples/master/object_detection/labels",
-      "anchors": [
-        1.08,
-        1.19,
-        3.42,
-        4.41,
-        6.63,
-        11.38,
-        9.42,
-        5.11,
-        16.62,
-        10.52
-      ],
-      "margin": [
-        1,
-        1,
-        1,
-        1
-      ],
-      "options": [
-        {
-          "val": "ssdMobilenetV1",
-          "label": "MobileNet V1",
-          "disable": true,
-          "width": 300,
-          "height": 300
-        },
-        {
-          "val": "tinyYoloV2",
-          "label": "Tiny Yolo V2",
-          "width": 416,
-          "height": 416
-        }
-      ],
-      "nchw": {
-        "normalize": false,
-        "labelsSlug": "pascal_classes",
-        "outputShape": [
-          1,
-          125,
-          13,
-          13
-        ]
-      },
-      "nhwc": {
-        "labelsSlug": "coco_classes",
-        "outputShape": [
-          1,
-          13,
-          13,
-          125
-        ]
-      }
-    },
     "semanticSegmentation": {
       "disabled": true,
       "title": "Semantische Segmentierung",
@@ -233,7 +176,14 @@
     "title": "Komplexe Anwendungsfälle",
     "faceRecognition": {
       "disabled": true,
-      "title": "Gesichtserkennung"
+      "title": "Gesichtserkennung",
+      "width": 160,
+      "heigth": 160,
+      "nchw": {
+        "mean": [127.5, 127.5, 127.5, 127.5],
+        "std": [127.5, 127.5, 127.5, 127.5],
+        "channelScheme": "BGR"
+      }
     },
     "facialLandmarks": {
       "disabled": true,

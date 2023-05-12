@@ -1,3 +1,5 @@
+import {op} from "@tensorflow/tfjs";
+import * as punycode from "punycode";
 import * as Yolo2Decoder from "./libs/yolo2Decoder.js";
 import {Graph} from "./Graph.js";
 import {numpy} from "./libs/numpy.js";
@@ -9,58 +11,61 @@ async function getMLContext(options = {}) {
   return await navigator.ml.createContext({powerPreference: 'low-power', ...options});
 }
 
-export async function compileMLGraph(tensor, values) {
+export async function buildGraph(dimensions,values){
+  const chunkSize = 2
   const context = await getMLContext()
   const builder = new MLGraphBuilder(context);
-  const desc = {type: 'float32', dimensions: tensor.dimensions};
-  const intermediates = []
-  const names = []
-  tensor.dimensions.reduce((acc, curr, index, array) => {
-    if (index % 2 === 0) {
-      acc.push(array.slice(index, index + 2));
-    }
-    return acc;
-  }, []).forEach((pair, pIndex) => {
-    const inputs = tensor.dimensions.map((val, i) => {
-      if (pIndex > 0) pIndex += tensor.dimensions.length
-      return builder.input(`input_${i + pIndex}`, desc)
-    })
-    names.push(inputs[0].name, inputs[1].name)
-    intermediates.push(builder.add(inputs[0], inputs[1]))
+  const size = sizeOfShape(dimensions)
+  const inputDef = {type: 'float32', dimensions};
+  const inputs = dimensions.map((dim,i) => {
+    return builder.input(`input_${i}`, inputDef)
   })
-  const output = builder.add(intermediates[0], intermediates[1])
-  const graph = await builder.build({'output': output});
-  const outputBuffer = new Float32Array(tensor.size);
-  const graphInputs = names.reduce((acc, curr, i) => {
-    acc = {...acc, [curr]: new Float32Array(tensor.size).fill(values[i])}
+
+  //Defining the layers
+  const hiddenLayers = inputs.reduce((acc,curr,index,array) => {
+    const pairIndex = Math.floor(index/chunkSize)
+    if(!acc[pairIndex]) acc[pairIndex] = []
+    acc[pairIndex].push(curr)
     return acc
-  }, {})
+  },[]).filter(pair => !!pair[0] && !!pair[1]).map(pair => {
+    return builder.add(pair[0], pair[1])
+  })
+  const outputLayer = builder.mul(hiddenLayers[0], hiddenLayers[1])
+
+  //compile graph and inputs
+  const graph = await builder.build({'output': outputLayer});
+  const graphInputs = [...graph.inputs_.keys()].reduce((acc,curr,i) => {
+    return {...acc,[curr]: new Float32Array(size).fill(values[i])}
+  },{})
+
+  //Provide output buffer for results and execute
+  const outputBuffer = new Float32Array(size);
   const out = await context.compute(graph, graphInputs, {'output': outputBuffer})
   return out.outputs.output
 }
 
 export function getInputTensor(inputElement,outputElement,options){
-  const dimensions = [1, 3, options.height, options.width]
+  //NCHW
+  let dimensions = [1, 3, options.height, options.width]
   const tensor = new Float32Array(
     dimensions.slice(1).reduce((a, b) => a * b));
-
-  inputElement.width = inputElement.videoWidth ||
-    inputElement.naturalWidth;
-  inputElement.height = inputElement.videoHeight ||
-    inputElement.naturalHeight;
-
   let [channels, height, width] = dimensions.slice(1);
+  if(options.layout === 'nhwc'){
+    //TODO: Umwandlung in NHWC
+  }
+
   const mean = options.mean || [0, 0, 0, 0];
   const std = options.std || [1, 1, 1, 1];
-  const normlizationFlag = options.normalize || false;
+  const normalizationFlag = options.normalize || false;
   const channelScheme = options.channelScheme || 'RGB';
   const scaledFlag = options.scaled || false;
   const inputLayout = options.layout;
   const imageChannels = 4; // RGBA
-  if (inputLayout === 'nhwc') {
-    [height, width, channels] = dimensions.slice(1);
-  }
   const canvasElement = outputElement
+
+  inputElement.width = inputElement.videoWidth || inputElement.naturalWidth;
+  inputElement.height = inputElement.videoHeight || inputElement.naturalHeight;
+
   canvasElement.width = width;
   canvasElement.height = height;
   const canvasContext = canvasElement.getContext('2d');
@@ -77,7 +82,7 @@ export function getInputTensor(inputElement,outputElement,options){
 
   let pixels = canvasContext.getImageData(0, 0, width, height).data;
 
-  if (normlizationFlag) {
+  if (normalizationFlag) {
     pixels = new Float32Array(pixels).map((p) => p / 255);
   }
 
@@ -180,7 +185,6 @@ export async function makePredictions(type,modelName, buffer, labels,outputShape
     const imWidth = srcElement.naturalWidth | srcElement.width;
     const imHeight = srcElement.naturalHeight | srcElement.height;
     const resizeRatio = Math.max(Math.max(imWidth, imHeight) / width, 1);
-    console.log(resizeRatio);
     const scaledWidth = Math.floor(imWidth / resizeRatio);
     const scaledHeight = Math.floor(imHeight / resizeRatio);
 

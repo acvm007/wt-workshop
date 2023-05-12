@@ -11,8 +11,7 @@ export default class {
     const weightsName = prefix + '_weight.npy';
     const weights = await buildConstantByNpy(this.builder, weightsName);
     const biasName = prefix + '_bias.npy';
-    const bias = await buildConstantByNpy(this.builder, biasName);
-    options.bias = bias;
+    options.bias = await buildConstantByNpy(this.builder, biasName);
     if (relu6) {
       // implement `relu6` by `clamp` of  WebNN API
       options.activation = this.builder.clamp({minValue: 0, maxValue: 6});

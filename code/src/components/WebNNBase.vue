@@ -33,7 +33,7 @@ const selected = ref('image')
 const selectedStyle = ref(null)
 const showCanvas = ref(false)
 const image = reactive({
-  src:`/images/${props.modelData.image}`,
+  src:`/workshop/images/${props.modelData.image}`,
   width:0,
   height:0
 })
@@ -133,7 +133,7 @@ async function predict(){
     <section class="styleImages">
       <QImg v-for="(name,src) in modelData.styles"
             :key="src"
-            :src="`/images/styles/${src}`"
+            :src="`/workshop/images/styles/${src}`"
             :alt="`Style ${name}`"
             :class="[{selected:selectedStyle === src}]"
             fit="contain"

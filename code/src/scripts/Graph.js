@@ -93,7 +93,7 @@ export class Graph {
         break
       }
       case 'fastStyleTransfer_nchw':{
-        //Style Trabsfer
+        //Style Transfer
         modelGraph = new StyleTransferNet(url,this.builder,style)
         break
       }
