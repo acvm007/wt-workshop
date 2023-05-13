@@ -1,3 +1,4 @@
+import {op} from "@tensorflow/tfjs";
 import * as Yolo2Decoder from "./libs/yolo2Decoder.js";
 import {Graph} from "./Graph.js";
 import {numpy} from "./libs/numpy.js";
@@ -5,8 +6,11 @@ import {GET} from "./requestUtils.js";
 import * as tf from "@tensorflow/tfjs"
 import {Renderer} from './libs/renderer.js'
 
-async function getMLContext(options = {}) {
-  return await navigator.ml.createContext({powerPreference: 'low-power', ...options,deviceType:options.device ?? 'cpu'});
+async function getMLContext(options = {
+  powerPreference: 'low-power',
+  deviceType: 'cpu'
+}) {
+  return await navigator.ml.createContext(options);
 }
 
 export async function buildGraph(dimensions,values){
@@ -109,8 +113,8 @@ export function getInputTensor(inputElement,outputElement,options){
   return {tensor,dimensions,inputTime:getTime(start,end)};
 }
 
-export async function computeGraphResults(type,inputBuffer, dimensions, modelName, outputShape,style,device) {
-  const context = await getMLContext({device})
+export async function computeGraphResults(type,inputBuffer, dimensions, modelName, outputShape,style,deviceType) {
+  const context = await getMLContext({deviceType})
   const builder = new MLGraphBuilder(context);
   const data = builder.input('input', {type: 'float32', dimensions});
   let outputBuffer
@@ -254,5 +258,5 @@ function sizeOfShape(shape) {
 }
 
 export function getTime(start,end){
-  return (end - start).toFixed(2)
+  return end - start.toFixed(2)
 }
