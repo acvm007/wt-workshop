@@ -2,3 +2,5 @@
 code/.vscode/
 
 .idea/
+
+dist/

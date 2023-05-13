@@ -48,9 +48,9 @@ export function getInputTensor(inputElement,outputElement,options){
   const tensor = new Float32Array(
     dimensions.slice(1).reduce((a, b) => a * b));
   let [channels, height, width] = dimensions.slice(1);
+
   if(options.layout === 'nhwc'){
-    //TODO: Umwandlung in NHWC
-    
+    //TODO
   }
 
   const mean = options.mean || [0, 0, 0, 0];
@@ -254,5 +254,5 @@ function sizeOfShape(shape) {
 }
 
 export function getTime(start,end){
-  return end - start
+  return (end - start).toFixed(2)
 }

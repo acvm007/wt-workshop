@@ -101,7 +101,7 @@ async function predict(){
   timers.compile = compileTime
   timers.compute = executionTime
   timers.predict = predictTime
-  timers.total = inputTime +buildTime + compileTime + executionTime + predictTime
+  timers.total = (inputTime +buildTime + compileTime + executionTime + predictTime).toFixed(2)
 
 }
 </script>
