@@ -1,5 +1,3 @@
-import {op} from "@tensorflow/tfjs";
-import * as punycode from "punycode";
 import * as Yolo2Decoder from "./libs/yolo2Decoder.js";
 import {Graph} from "./Graph.js";
 import {numpy} from "./libs/numpy.js";
@@ -8,7 +6,7 @@ import * as tf from "@tensorflow/tfjs"
 import {Renderer} from './libs/renderer.js'
 
 async function getMLContext(options = {}) {
-  return await navigator.ml.createContext({powerPreference: 'low-power', ...options});
+  return await navigator.ml.createContext({powerPreference: 'low-power', ...options,deviceType:options.device ?? 'cpu'});
 }
 
 export async function buildGraph(dimensions,values){
@@ -30,7 +28,7 @@ export async function buildGraph(dimensions,values){
   },[]).filter(pair => !!pair[0] && !!pair[1]).map(pair => {
     return builder.add(pair[0], pair[1])
   })
-  const outputLayer = builder.mul(hiddenLayers[0], hiddenLayers[1])
+  const outputLayer = builder.div(hiddenLayers[0], hiddenLayers[1])
 
   //compile graph and inputs
   const graph = await builder.build({'output': outputLayer});
@@ -45,13 +43,14 @@ export async function buildGraph(dimensions,values){
 }
 
 export function getInputTensor(inputElement,outputElement,options){
-  //NCHW
+  const start = performance.now()
   let dimensions = [1, 3, options.height, options.width]
   const tensor = new Float32Array(
     dimensions.slice(1).reduce((a, b) => a * b));
   let [channels, height, width] = dimensions.slice(1);
   if(options.layout === 'nhwc'){
     //TODO: Umwandlung in NHWC
+    
   }
 
   const mean = options.mean || [0, 0, 0, 0];
@@ -106,11 +105,12 @@ export function getInputTensor(inputElement,outputElement,options){
       }
     }
   }
-  return {tensor,dimensions};
+  const end = performance.now()
+  return {tensor,dimensions,inputTime:getTime(start,end)};
 }
 
-export async function computeGraphResults(type,inputBuffer, dimensions, modelName, outputShape,style) {
-  const context = await getMLContext()
+export async function computeGraphResults(type,inputBuffer, dimensions, modelName, outputShape,style,device) {
+  const context = await getMLContext({device})
   const builder = new MLGraphBuilder(context);
   const data = builder.input('input', {type: 'float32', dimensions});
   let outputBuffer
@@ -128,9 +128,12 @@ export async function computeGraphResults(type,inputBuffer, dimensions, modelNam
     sizeOfShape(outputShape)
   )
   const computationalGraph = new Graph(context, builder, modelName)
-  const outputOperand = await computationalGraph.load(data,style)
-  const graph = await computationalGraph.compile(outputOperand)
-  return (await computationalGraph.execute(graph, inputBuffer, outputBuffer)).outputs.output
+  const {graph:outputOperand,time:buildTime} = await computationalGraph.load(data,style)
+  const {compiled:graph,time:compileTime} = await computationalGraph.compile(outputOperand)
+  const {executed,time:executionTime} = await computationalGraph.execute(graph,inputBuffer,outputBuffer)
+  return {
+    result:executed.outputs.output, buildTime,compileTime,executionTime
+  }
 }
 
 export async function makePredictions(type,modelName, buffer, labels,outputShape,options,elements,returnNum = 3) {
@@ -197,7 +200,13 @@ export async function makePredictions(type,modelName, buffer, labels,outputShape
     renderer.setup();
     await renderer.uploadNewTexture(srcElement,[scaledWidth,scaledHeight])
     const res = await renderer.drawOutputs(segMap)
-    //console.log(res);
+    const results = []
+    for(const key in res){
+      const [label,color] = res[key]
+      results.push({label,value:color.join(', ')})
+    }
+    console.log(res);
+    return results
   }
   else {
     console.log(type,buffer)
@@ -242,4 +251,8 @@ export async function buildConstantByNpy(builder, url) {
 
 function sizeOfShape(shape) {
   return shape.reduce((a, b) => a * b)
+}
+
+export function getTime(start,end){
+  return end - start
 }

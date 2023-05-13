@@ -29,7 +29,7 @@ const links = computed(() => {
     disabled:false,
     to:{name:'Graph'}
   },
-  ...['simple','complex'].map(type => {
+  ...Object.keys(modelData).map(type => {
     const children = Object.keys(modelData[type]).filter(key => key !== 'title').reduce((acc,name) => {
       const data = modelData[type][name]
       const disabled = `disabled` in data && data.disabled

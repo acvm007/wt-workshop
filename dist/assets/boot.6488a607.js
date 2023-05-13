@@ -1,1 +1,0 @@
-import{D as a}from"./index.2027a9cc.js";var o=({app:t})=>{t.config.errorHandler=function(e){console.trace(e),a.create({title:"Es ist ein Fehler aufgetreten",message:e.message,dark:!0})}};export{o as default};

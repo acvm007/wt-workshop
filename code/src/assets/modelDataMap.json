@@ -2,7 +2,7 @@
   "simple": {
     "title": "Einfache Anwendungsfälle",
     "imageClassification": {
-      "title": "Bild Klassifizierung",
+      "title": "Bildklassifizierung",
       "image": "panda.jpg",
       "labelsUrl": "https://raw.githubusercontent.com/webmachinelearning/webnn-samples/master/image_classification/labels",
       "width": 224,
@@ -116,7 +116,6 @@
       }
     },
     "semanticSegmentation": {
-      "disabled": true,
       "title": "Semantische Segmentierung",
       "image": "semSeg.jpg",
       "labelsUrl": "https://raw.githubusercontent.com/webmachinelearning/webnn-samples/master/semantic_segmentation/labels",
@@ -143,7 +142,6 @@
     },
     "styleTransfer": {
       "title": "Style Transfer",
-      "disabled": true,
       "image": "space.jpg",
       "styles":{
         "red-vineyards.jpg": "Rote Weinberge",
@@ -170,24 +168,6 @@
           540
         ]
       }
-    }
-  },
-  "complex": {
-    "title": "Komplexe Anwendungsfälle",
-    "faceRecognition": {
-      "disabled": true,
-      "title": "Gesichtserkennung",
-      "width": 160,
-      "heigth": 160,
-      "nchw": {
-        "mean": [127.5, 127.5, 127.5, 127.5],
-        "std": [127.5, 127.5, 127.5, 127.5],
-        "channelScheme": "BGR"
-      }
-    },
-    "facialLandmarks": {
-      "disabled": true,
-      "title": "Gesichtsregionen Erkennung"
     }
   }
 }

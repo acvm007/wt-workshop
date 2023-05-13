@@ -1,5 +1,4 @@
-import Facenet_nchw from "src/modelGraphs/faceRecognition/Facenet_nchw.js";
-import Facenet_nhwc from "src/modelGraphs/faceRecognition/Facenet_nhwc.js";
+import {getTime} from "src/scripts/webnnFunctions.js";
 import Mobilenetv1_nchw from "src/modelGraphs/objectDetection/Mobilenetv1_nchw.js";
 import Mobilenetv1_nhwc from "src/modelGraphs/objectDetection/Mobilenetv1_nhwc.js";
 import Mobilenetv2_nchw from "src/modelGraphs/imageClassification/Mobilenetv2_nchw.js";
@@ -23,21 +22,28 @@ export class Graph {
 
   //Compile the graph
   async compile(outputOperand) {
+    const start = performance.now()
     let input
     if(this.modelName.startsWith('ssdMobilenetV1')) input = outputOperand
     else input = {'output': outputOperand}
-    return await this.builder.build(input);
+    const compiled = await this.builder.build(input)
+    const end = performance.now()
+    return {compiled,time:getTime(start,end)}
   }
 
   //Execute the graph
   async execute(graph,inputBuffer, outputBuffer) {
+    const start = performance.now()
     const inputs = {'input': inputBuffer};
     const outputs = {'output': outputBuffer};
-    return await this.context.compute(graph, inputs, outputs);
+    const executed = await this.context.compute(graph, inputs, outputs);
+    const end = performance.now()
+    return {executed,time:getTime(start,end)}
   }
 
   //Abstraction function to build different graphs
   async load(data,style){
+    const start = performance.now()
     const url = `https://web102.in-p.de/webnn/models/${this.modelName}/weights/`
     let modelGraph
     switch (this.modelName){
@@ -107,20 +113,10 @@ export class Graph {
         modelGraph = new DeeplabV3_nhwc(url,this.builder)
         break
       }
-
-      //Complex use cases
-      case 'facenet_nchw':{
-        //Face Recognition
-        modelGraph = new Facenet_nchw(url,this.builder)
-        break
-      }
-      case 'facenet_nhwc':{
-        //Face Recognition
-        modelGraph = new Facenet_nhwc(url,this.builder)
-        break
-      }
       default: throw Error(`Model "${this.modelName}" not valid!`)
     }
-    return await modelGraph.load(data)
+    const graph = await modelGraph.load(data)
+    const end = performance.now()
+    return {graph,time:getTime(start,end)}
   }
 }

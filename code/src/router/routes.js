@@ -1,3 +1,4 @@
+import {mod} from "@tensorflow/tfjs";
 import modelData from 'src/assets/modelDataMap.json'
 
 const routes = [
@@ -14,7 +15,7 @@ const routes = [
         name: 'Graph',
         component: () => import('pages/ComputationalGraph.vue')
       },
-      ...['simple','complex'].map(type => {
+      ...Object.keys(modelData).map(type => {
         return {
           path:`/${type}`,
           children:Object.keys(modelData[type]).map(name => {
