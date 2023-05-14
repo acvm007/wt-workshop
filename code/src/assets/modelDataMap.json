@@ -1,0 +1,173 @@
+{
+  "simple": {
+    "title": "Einfache Anwendungsfälle",
+    "imageClassification": {
+      "title": "Bildklassifizierung",
+      "image": "panda.jpg",
+      "labelsUrl": "https://raw.githubusercontent.com/webmachinelearning/webnn-samples/master/image_classification/labels",
+      "width": 224,
+      "height": 224,
+      "options": [
+        {
+          "val": "mobilenetv2",
+          "label": "MobileNet V2"
+        },
+        {
+          "val": "squeezenet",
+          "label": "Squeezenet"
+        },
+        {
+          "val": "resnet50v2",
+          "label": "Resnet 50 V2"
+        }
+      ],
+      "nchw": {
+        "mean": [
+          0.485,
+          0.456,
+          0.406
+        ],
+        "std": [
+          0.229,
+          0.224,
+          0.225
+        ],
+        "normalize": true,
+        "labelsSlug": "labels1000",
+        "outputShape": [
+          1,
+          1000
+        ]
+      },
+      "nhwc": {
+        "mean": [
+          127.5,
+          127.5,
+          127.5
+        ],
+        "std": [
+          127.5,
+          127.5,
+          127.5
+        ],
+        "normalize": false,
+        "labelsSlug": "labels1001",
+        "outputShape": [
+          1,
+          1001
+        ]
+      }
+    },
+    "objectDetection": {
+      "title": "Objekterkennung",
+      "image": "paragliding.jpg",
+      "labelsUrl": "https://raw.githubusercontent.com/webmachinelearning/webnn-samples/master/object_detection/labels",
+      "anchors": [
+        1.08,
+        1.19,
+        3.42,
+        4.41,
+        6.63,
+        11.38,
+        9.42,
+        5.11,
+        16.62,
+        10.52
+      ],
+      "margin": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "options": [
+        {
+          "val": "ssdMobilenetV1",
+          "label": "MobileNet V1",
+          "disable": true,
+          "width": 300,
+          "height": 300
+        },
+        {
+          "val": "tinyYoloV2",
+          "label": "Tiny Yolo V2",
+          "width": 416,
+          "height": 416
+        }
+      ],
+      "nchw": {
+        "normalize": false,
+        "labelsSlug": "pascal_classes",
+        "outputShape": [
+          1,
+          125,
+          13,
+          13
+        ]
+      },
+      "nhwc": {
+        "labelsSlug": "coco_classes",
+        "outputShape": [
+          1,
+          13,
+          13,
+          125
+        ]
+      }
+    },
+    "semanticSegmentation": {
+      "title": "Semantische Segmentierung",
+      "image": "semSeg.jpg",
+      "labelsUrl": "https://raw.githubusercontent.com/webmachinelearning/webnn-samples/master/semantic_segmentation/labels",
+      "options": [{
+          "val": "deeplabV3",
+          "label": "Deeplab V3"
+      }],
+      "width": 513,
+      "height": 513,
+      "nchw": {
+        "mean": [127.5, 127.5, 127.5],
+        "std": [127.5, 127.5, 127.5],
+        "scaled": true,
+        "labelsSlug": "labels",
+        "outputShape": [1,21,513,513]
+      },
+      "nhwc": {
+        "mean": [127.5, 127.5, 127.5],
+        "std": [127.5, 127.5, 127.5],
+        "scaled": true,
+        "labelsSlug": "labels",
+        "outputShape": [1,513,513,21]
+      }
+    },
+    "styleTransfer": {
+      "title": "Style Transfer",
+      "image": "space.jpg",
+      "styles":{
+        "red-vineyards.jpg": "Rote Weinberge",
+        "soup-distribution.jpg": "Suppen Ausgabe",
+        "sunflowers-bew.jpg": "\"Sunflowers\" (1889)",
+        "wheatfield_with_crows.jpg": "Weizenfeld mit Raben",
+        "bedroom.jpg": "Van Gogh's Schlafzimmer in Arles",
+        "la-campesinos.jpg": "Pause von der Arbeit",
+        "self-portrait.jpg":  "Selbst Portrait",
+        "sien-with-a-cigar.jpg": "Sien mit einer Zigarre",
+        "starrynight.jpg": "\"Sternennacht\", (1889)"
+      },
+      "width": 540,
+      "height": 540,
+      "options": [{
+          "val": "fastStyleTransfer",
+          "label": "Style Transfer Net"
+      }],
+      "nchw": {
+        "outputShape": [
+          1,
+          3,
+          540,
+          540
+        ]
+      }
+    }
+  }
+}
