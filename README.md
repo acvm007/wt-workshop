@@ -1,7 +1,7 @@
 # Web Neural Network API Workshop
 
-ˋˋˋ
+ˋˋˋ  
 cd code  
 npm i  
-npm run dev
+npm run dev  
 ˋˋˋ
