@@ -1,5 +1,7 @@
 # Web Neural Network API Workshop
 
-ˋˋˋcd codeˋˋˋ
-ˋˋˋnpm iˋˋˋ
-ˋˋˋnpm run devˋˋˋ
+ˋˋˋ
+cd code  
+npm i  
+npm run dev
+ˋˋˋ
