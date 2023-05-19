@@ -54,8 +54,9 @@ export function getInputTensor(inputElement,outputElement,options){
   let [channels, height, width] = dimensions.slice(1);
 
   if(options.layout === 'nhwc'){
-    //TODO
-  }
+    dimensions = [1,options.height,options.width,3];
+    [height,width,channels] = dimensions.slice(1)
+ }
 
   const mean = options.mean || [0, 0, 0, 0];
   const std = options.std || [1, 1, 1, 1];
